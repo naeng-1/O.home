@@ -295,8 +295,8 @@ function CharDetailInner() {
           ) : tab === '__gallery' ? (
             <CharGalleryTab char={ch} />
           ) : (
-        { /* [갤러리 관련 수정] */ }
             <>
+              { /* [갤러리 관련 수정] */ }
               <h3 className="tab-tt">{curTab?.title}</h3>
               {curTab?.subtitle && <div className="sub">{curTab.subtitle}</div>}
               <div className="prose" dangerouslySetInnerHTML={{ __html: tabHtml }} />
