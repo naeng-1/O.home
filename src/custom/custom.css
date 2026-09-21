@@ -1,0 +1,22 @@
+/* src/custom/custom.css — 내 디자인 덮어쓰기
+   layout.tsx에서 원본 globals.css 「뒤에」 불러오므로, 우선순위가 같으면 이쪽이 이긴다.
+   원본 CSS는 고치지 않는다 — 원본을 업데이트해도 이 파일은 충돌하지 않는다. */
+
+:root {
+  /* ▼ 폰트 이름은 여기만 바꾸면 된다.
+     환경설정 > 폰트 목록에 있는 폰트(내장·URL·업로드)는 사이트가 항상 로드해 두므로
+     그 폰트의 family 값을 그대로 쓰면 된다. (뒤에 대체 서체 sans-serif / serif 를 붙여 둔다)
+     내장 예: 'Noto Serif KR' · 'Gowun Batang' · 'Nanum Myeongjo' · 'Song Myung'
+             'Do Hyeon' · 'Black Han Sans' · 'NanumSquareNeo'
+     지금 값: 나눔스퀘어 네오 (내장 폰트 — CSS URL로 항상 로드됨) */
+  --custom-tab-title-font: 'NanumSquareNeo', sans-serif;
+}
+
+/* 캐릭터 프로필 — 추가 탭 제목 (<h3 class="tab-tt">)
+   원래는 타이틀 폰트(--serif)를 따라간다. 여기서 그것과 다르게 지정한다. */
+.tab-tt {
+  font-family: var(--custom-tab-title-font) !important;
+  /* font-weight: 400; */   /* 폰트가 굵기 하나뿐이면 주석을 풀어 굵기를 맞추세요 */
+}
+
+/* 감상타래 제목 — 어느 요소인지 확인 후 추가 (threads 페이지 파일이 필요함) */
