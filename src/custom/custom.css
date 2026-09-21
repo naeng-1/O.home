@@ -10,6 +10,8 @@
              'Do Hyeon' · 'Black Han Sans' · 'NanumSquareNeo'
      지금 값: 나눔스퀘어 네오 (내장 폰트 — CSS URL로 항상 로드됨) */
   --custom-tab-title-font: 'NanumSquareNeo', sans-serif;
+  /* 감상타래 상세 — 타래 제목 */
+  --custom-thread-title-font: 'NanumSquareNeo', sans-serif;
 }
 
 /* 캐릭터 프로필 — 추가 탭 제목 (<h3 class="tab-tt">)
@@ -19,4 +21,11 @@
   /* font-weight: 400; */   /* 폰트가 굵기 하나뿐이면 주석을 풀어 굵기를 맞추세요 */
 }
 
-/* 감상타래 제목 — 어느 요소인지 확인 후 추가 (threads 페이지 파일이 필요함) */
+/* 감상타래 상세 — 타래 제목 (.thr-head 안의 <div class="tt">)
+   !important를 일부러 쓰지 않는다. 타래에 폰트를 직접 지정한 글은 그 폰트가 요소에 인라인 style로 붙는데,
+   일반 CSS 규칙은 인라인 style을 이기지 못한다 → 「직접 지정한 글은 그대로, 기본값인 글만」 바뀐다.
+   선택자를 길게 쓴 건 원본 규칙보다 우선순위를 높이려는 것 (.tt 만으로는 원본에 질 수 있다) */
+.thr-layout .thr-head .tt {
+  font-family: var(--custom-thread-title-font);
+  /* font-weight: 700; */   /* 굵기가 어색하면 주석을 풀어 조절 */
+}
