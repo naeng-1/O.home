@@ -247,7 +247,7 @@ export default function RelDetailPage() {
   const [chars, setChars, charsLoaded] = useLocalList<Character>('ohome.chars.v1', CHAR_SEED);
   const [logs] = useLocalList<TrpgLog>('ohome.trpg.v1', TRPG_SEED);
   const [rooms] = useLocalList<RpRoom>('ohome.rp.v1', RP_SEED);
-  const [tab, setTab] = const [tab, setTab] = useState<'tl' | 'qa' | 'gal'>('tl');
+  const [tab, setTab] = useState<'tl' | 'qa' | 'gal'>('tl');
   // [갤러리 관련 수정]
   const [auId, setAuId] = useState('base');
   const [oneMode, setOneMode] = useState<boolean | null>(null);
