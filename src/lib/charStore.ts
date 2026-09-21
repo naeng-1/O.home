@@ -351,6 +351,7 @@ export interface RelAu {
 }
 
 export interface Relation {
+  secId?: string;
   id: string;
   /** 페이지 주소 별명 (v2.0 사용자 요청) — /rels/{별명}. 나중에 수정 화면에서 바꿀 수 있다.
    *  참조(AU 프로필 키·로그 연동 등)는 언제나 id로 저장되므로 바꿔도 끊어지지 않는다. */
