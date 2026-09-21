@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import '../custom/custom.css';
+// [폰트 관련 수정]
 import { ThemeProvider } from '@/lib/ThemeProvider';
 import { AuthProvider } from '@/lib/auth';
 import { MainStoreProvider } from '@/lib/mainStore';
