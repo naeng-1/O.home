@@ -19,6 +19,7 @@ import { EditableDesc, PageTitle } from '@/components/ui/PageText';
 import { useSectionTitle } from '@/lib/sectionStore';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { CharGalleryTab } from '@/custom/GalleryTab';
+// [갤러리 관련 수정]
 
 function CharDetailInner() {
   const { id } = useParams<{ id: string }>();
@@ -200,9 +201,10 @@ function CharDetailInner() {
         <div className="side-icons">
           <button className={tab === 'basic' ? 'on' : ''} data-tip="기본 정보" onClick={() => pickTab('basic')}>☰</button>
           {eff.tabs.map(t => (
-          <button className={tab === '__gallery' ? 'on' : ''} data-tip="갤러리" onClick={() => pickTab('__gallery')}>▦</button>
+            <button key={t.id} className={tab === t.id ? 'on' : ''} data-tip={t.title} onClick={() => pickTab(t.id)}>{t.icon}</button>
           ))}
           <button className={tab === '__gallery' ? 'on' : ''} data-tip="갤러리" onClick={() => pickTab('__gallery')}>▦</button>
+          { /* [갤러리 관련 수정] */ }
           {isAdmin && (
             <button data-tip="탭 추가 (편집모드)" style={{ borderStyle: 'dashed', fontSize: 13 }}
               onClick={() => router.push(editHref)}>＋</button>
@@ -293,6 +295,7 @@ function CharDetailInner() {
           ) : tab === '__gallery' ? (
             <CharGalleryTab char={ch} />
           ) : (
+        { /* [갤러리 관련 수정] */ }
             <>
               <h3 className="tab-tt">{curTab?.title}</h3>
               {curTab?.subtitle && <div className="sub">{curTab.subtitle}</div>}
