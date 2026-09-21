@@ -18,6 +18,7 @@ import { CroppedBlobImg, CropEditor, type CropValue } from '@/components/ui/Crop
 import { EditableDesc, PageTitle } from '@/components/ui/PageText';
 import { useSectionTitle } from '@/lib/sectionStore';
 import { ConfirmModal } from '@/components/ui/Modal';
+import { CharGalleryTab } from '@/custom/GalleryTab';
 
 function CharDetailInner() {
   const { id } = useParams<{ id: string }>();
@@ -199,8 +200,9 @@ function CharDetailInner() {
         <div className="side-icons">
           <button className={tab === 'basic' ? 'on' : ''} data-tip="기본 정보" onClick={() => pickTab('basic')}>☰</button>
           {eff.tabs.map(t => (
-            <button key={t.id} className={tab === t.id ? 'on' : ''} data-tip={t.title} onClick={() => pickTab(t.id)}>{t.icon}</button>
+          <button className={tab === '__gallery' ? 'on' : ''} data-tip="갤러리" onClick={() => pickTab('__gallery')}>▦</button>
           ))}
+          <button className={tab === '__gallery' ? 'on' : ''} data-tip="갤러리" onClick={() => pickTab('__gallery')}>▦</button>
           {isAdmin && (
             <button data-tip="탭 추가 (편집모드)" style={{ borderStyle: 'dashed', fontSize: 13 }}
               onClick={() => router.push(editHref)}>＋</button>
@@ -288,6 +290,8 @@ function CharDetailInner() {
               </dl>
               <div className="prose" dangerouslySetInnerHTML={{ __html: basicHtml }} />
             </>
+          ) : tab === '__gallery' ? (
+            <CharGalleryTab char={ch} />
           ) : (
             <>
               <h3 className="tab-tt">{curTab?.title}</h3>
