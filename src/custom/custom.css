@@ -12,6 +12,8 @@
   --custom-tab-title-font: 'NanumSquareNeo', sans-serif;
   /* 감상타래 상세 — 타래 제목 */
   --custom-thread-title-font: 'NanumSquareNeo', sans-serif;
+  /* 자관 목록 카드 — 자관 이름 */
+  --custom-rel-card-name-font: 'NanumSquareNeo', sans-serif;
 }
 
 /* 캐릭터 프로필 — 추가 탭 제목 (<h3 class="tab-tt">)
@@ -27,5 +29,11 @@
    선택자를 길게 쓴 건 원본 규칙보다 우선순위를 높이려는 것 (.tt 만으로는 원본에 질 수 있다) */
 .thr-layout .thr-head .tt {
   font-family: var(--custom-thread-title-font);
+  /* font-weight: 700; */   /* 굵기가 어색하면 주석을 풀어 조절 */
+}
+
+/* 자관 목록 카드 — 자관 이름 (.rel-card .nm b, 검사로 확인한 그대로) */
+.rel-card .nm b {
+  font-family: var(--custom-rel-card-name-font);
   /* font-weight: 700; */   /* 굵기가 어색하면 주석을 풀어 조절 */
 }
