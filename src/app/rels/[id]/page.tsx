@@ -566,12 +566,6 @@ export default function RelDetailPage() {
         ? [...auTimeline, item]
         : auTimeline.map((x, i) => (i === editing ? item : x)),
     });
-    const editing = tlEditIdx;
-    patchAuData({
-      timeline: editing == null
-        ? [...auTimeline, item]
-        : auTimeline.map((x, i) => (i === editing ? item : x)),
-    });
     if (tLocked) updateRel({ tlPw: tlPwDraft });   // [잠금 추가] [추가수정] 저장 버튼을 눌렀을 때만 비밀번호 반영
     closeTl();
     toast(editing == null ? '타임라인 항목이 추가되었습니다' : '타임라인 항목이 수정되었습니다');
