@@ -5,6 +5,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/lib/auth';
 import { Character, CharTab, ColorChip, Visibility, CharGrant } from '@/lib/charStore';
+import { LockFields } from '@/custom/LockGate';
+/* [잠금 추가] */
 import { GrantsEditor } from '@/components/chars/GrantsEditor';
 import { newId } from '@/lib/postStore';
 import { putBlob, getBlob, useBlobUrl } from '@/lib/blobStore';
@@ -394,6 +396,14 @@ function TabEditView({ tab, onChange, onDelete, onBack }: {
         <KInput placeholder="소제목 (선택)" value={tab.subtitle ?? ''}
           onChange={e => onChange({ subtitle: e.target.value })} />
       </div>
+            {/* [커스텀] 비밀 탭 잠금 */}
+            {/* [잠금 추가] */}
+      <LockFields
+        locked={!!tab.locked}
+        password={tab.password ?? ''}
+        onLockedChange={v => onChange({ locked: v })}
+        onPasswordChange={v => onChange({ password: v })}
+      />
       {/* 리치 에디터 (TipTap) — 툴바로 서식·이미지 삽입, 출력은 HTML */}
       <RichEditor value={tab.html} onChange={html => onChange({ html })}
         placeholder="탭 내용을 작성하세요 — 이미지 삽입 가능 (스크립트 불허 6.3)" />
