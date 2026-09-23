@@ -20,6 +20,8 @@ import { useSectionTitle } from '@/lib/sectionStore';
 import { ConfirmModal } from '@/components/ui/Modal';
 import { CharGalleryTab } from '@/custom/GalleryTab';
 // [갤러리 관련 수정]
+import { useUnlockedSet, PasswordGate, LockDot } from '@/custom/LockGate';
+// [짐금 추가]
 
 function CharDetailInner() {
   const { id } = useParams<{ id: string }>();
@@ -35,6 +37,7 @@ function CharDetailInner() {
   const [artIdx, setArtIdx] = useState(0);
   const [delAsk, setDelAsk] = useState(false);   // 캐릭터 삭제 확인
   const infoRef = useRef<HTMLDivElement>(null);
+  const [unlockedTabs, unlockTab] = useUnlockedSet();   // [잠금 추가]
 
   // 별명 주소로도 열린다 (v2.0 사용자 요청 — 주소를 나중에 바꿔도 옛 주소가 살아 있게)
   const ch = findByKey(chars, id);
@@ -201,7 +204,10 @@ function CharDetailInner() {
         <div className="side-icons">
           <button className={tab === 'basic' ? 'on' : ''} data-tip="기본 정보" onClick={() => pickTab('basic')}>☰</button>
           {eff.tabs.map(t => (
-            <button key={t.id} className={tab === t.id ? 'on' : ''} data-tip={t.title} onClick={() => pickTab(t.id)}>{t.icon}</button>
+                        <button key={t.id} className={tab === t.id ? 'on' : ''} data-tip={t.title} onClick={() => pickTab(t.id)}>
+              {t.icon}{t.locked && !unlockedTabs.has(t.id) && <LockDot />}
+            </button>
+          { /* [잠금 추가] */ }
           ))}
           <button className={tab === '__gallery' ? 'on' : ''} data-tip="갤러리" onClick={() => pickTab('__gallery')}>▦</button>
           { /* [갤러리 관련 수정] */ }
@@ -294,6 +300,8 @@ function CharDetailInner() {
             </>
           ) : tab === '__gallery' ? (
             <CharGalleryTab char={ch} />
+          ) : curTab?.locked && !unlockedTabs.has(curTab.id) ? (
+            <PasswordGate password={curTab.password} onUnlock={() => unlockTab(curTab!.id)} label={`「${curTab?.title || '이 탭'}」 잠금`} />
           ) : (
             <>
               { /* [갤러리 관련 수정] */ }
