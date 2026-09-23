@@ -1159,7 +1159,7 @@ export default function RelDetailPage() {
                   </div>
                 );
               }} />
-            { /* [잠금 추가] */ }
+            // [잠금 추가]
           ) : (
           <div>
             { /* [잠금 추가] */ }
