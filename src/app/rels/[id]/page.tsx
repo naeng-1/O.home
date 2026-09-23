@@ -31,8 +31,8 @@ import { CroppedBlobImg, CropEditor, type CropValue } from '@/components/ui/Crop
 import { Lightbox } from '@/components/ui/Lightbox';
 import { useToast } from '@/components/ui/Toast';
 import { PageTitle } from '@/components/ui/PageText';
-import { RelGalleryTab } from '@/custom/GalleryTab';
-// [갤러리 관련 수정]
+import { RelGalleryTab } from '@/custom/GalleryTab'; // [갤러리 관련 수정]
+import { useUnlockedSet, PasswordGate, LockFields, LockDot } from '@/custom/LockGate'; // [잠금 추가]
 
 /** 전신 이미지 — 비율 유지, 하단 정렬, 크기 %는 자관 수정 미리보기에서 지정 (v1.9) */
 // 전신 그림자는 「그림자 직접 지정」의 색·강도를 따른다 (v2.0 사용자 요청) — 자관명 그림자와 같은 설정
@@ -263,6 +263,9 @@ export default function RelDetailPage() {
   // 타임라인 항목 우클릭 메뉴 (v2.0 사용자 요청) — 수정·삭제. 늘 떠 있는 [삭제] 글자는 없앴다
   const [tlCtx, setTlCtx] = useState<{ x: number; y: number; idx: number } | null>(null);
   const [tlEditIdx, setTlEditIdx] = useState<number | null>(null);   // null이면 새로 추가
+  const [unlockedTl, unlockTl] = useUnlockedSet();   // [커스텀]
+  const [tlUnlockOpen, setTlUnlockOpen] = useState(false);
+  // [잠금 추가]
   useEffect(() => {
     if (!tlCtx) return;
     const close = () => setTlCtx(null);
@@ -324,6 +327,7 @@ export default function RelDetailPage() {
   const [tDesc, setTDesc] = useState('');
   // 한마디는 핑퐁식으로 여러 개 (사용자 요청)
   const [tSays, setTSays] = useState<{ id: string; charId: string; text: string }[]>([]);
+  const [tLocked, setTLocked] = useState(false);   // [잠금 추가]
   const [tlSort, setTlSort] = useState(false); // 타임라인 정렬 모드 (드래그앤드롭)
   const [artIdx, setArtIdx] = useState(0);
   /* 중앙 일러 우클릭 → 상세에 보일 위치 조정 (v2.0 사용자 요청).
@@ -545,7 +549,7 @@ export default function RelDetailPage() {
   };
 
   /* ---------- 타임라인 항목 추가·수정 (설명/한마디 중 하나 필수 — 4.5) ---------- */
-  const closeTl = () => { setTlOpen(false); setTlEditIdx(null); setTEra(''); setTDesc(''); setTSays([]); };
+  const closeTl = () => { setTlOpen(false); setTlEditIdx(null); setTEra(''); setTDesc(''); setTSays([]); setTLocked(false); }; // [잠금 추가]
   const addTlItem = () => {
     const says = tSays.filter(x => x.charId && x.text.trim()).map(({ charId, text }) => ({ charId, text: text.trim() }));
     if (!tDesc.trim() && says.length === 0) { toast('설명 또는 한마디 중 하나는 입력해 주세요'); return; }
@@ -553,6 +557,7 @@ export default function RelDetailPage() {
       era: tEra.trim() || undefined,
       desc: tDesc.trim() || undefined,
       says,
+      locked: tLocked,   // [잠금 추가]
     };
     const editing = tlEditIdx;
     patchAuData({
@@ -571,6 +576,7 @@ export default function RelDetailPage() {
     setTEra(it.era ?? '');
     setTDesc(it.desc ?? '');
     setTSays(it.says.map(sy => ({ id: newId(), charId: sy.charId, text: sy.text })));
+    setTLocked(!!it.locked);   // [잠금 추가]
     setTlEditIdx(i);
     setTlOpen(true);
   };
@@ -1088,8 +1094,17 @@ export default function RelDetailPage() {
                 </button>
               )}
               {tab === 'tl'
-                ? <button className="btn btn-dark" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }} data-tip="기록 추가" onClick={() => setTlOpen(true)}><span className="lb-pc">＋ ADD RECORD</span><span className="lb-m">＋</span></button>
-                : tab === 'qa' && <>
+                ? <>
+                  {auTimeline.some(x => x.locked) && !unlockedTl.has('tl') && (
+                    <button className="btn btn-ghost" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }}
+                      data-tip="잠긴 기록 풀기" onClick={() => setTlUnlockOpen(true)}>
+                      <span className="lb-pc">🔒 잠금 해제</span><span className="lb-m">🔒</span>
+                    </button>
+                  )}
+                  <button className="btn btn-dark" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }} data-tip="기록 추가" onClick={() => setTlOpen(true)}><span className="lb-pc">＋ ADD RECORD</span><span className="lb-m">＋</span></button>
+                </>
+                : <>
+                  {/* [잠금 추가] */}
                   {/* [갤러리 관련 수정] */}
                   <button className="btn btn-ghost" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }} data-tip="질문 리스트 추가" onClick={() => setQsetOpen(true)}><span className="lb-pc">＋ 질문 리스트</span><span className="lb-m">≡</span></button>
                   {/* 되돌리기는 오른쪽 질문 리스트에서 우클릭 (v2.0 사용자 요청) — 여기엔 건너뛰기만 */}
@@ -1124,7 +1139,27 @@ export default function RelDetailPage() {
               items={auTimeline.map((item, i) => ({ item, key: `tl-${i}` }))}
               keyOf={x => x.key}
               onReorder={list => patchAuData({ timeline: list.map(x => x.item) })}
-              render={({ item }) => (
+              render={({ item }) => {
+                const hidden = item.locked && !unlockedTl.has('tl');   // [커스텀]
+                return (
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'center', width: '100%', padding: '8px 6px', border: '1.5px dashed var(--line)', borderRadius: 9, marginBottom: 6, background: '#fff' }}>
+                    <span className="drag-h">⠿</span>
+                    <div style={{ minWidth: 0 }}>
+                      {hidden ? (
+                        <div style={{ fontSize: 12.5, color: 'var(--faint)' }}><LockDot /> 잠긴 기록</div>
+                      ) : (
+                        <>
+                          {item.era && <div className="era">{item.era}</div>}
+                          <div style={{ fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            {item.desc || item.says.map(s => s.text).join(' / ')}
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              }} />
+              /* [잠금 추가] */
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center', width: '100%', padding: '8px 6px', border: '1.5px dashed var(--line)', borderRadius: 9, marginBottom: 6, background: '#fff' }}>
                   <span className="drag-h">⠿</span>
                   <div style={{ minWidth: 0 }}>
@@ -1137,7 +1172,37 @@ export default function RelDetailPage() {
               )} />
           ) : (
           <div>
-            {auTimeline.map((item, i) => (
+            { /* [잠금 추가] */ }
+            {auTimeline.map((item, i) => {
+              const hidden = item.locked && !unlockedTl.has('tl');   // [커스텀]
+              return (
+                <div className="tl-item" key={i}
+                  onContextMenu={e => {
+                    if (!isAdmin) return;
+                    e.preventDefault();
+                    setTlCtx({ x: e.clientX, y: e.clientY, idx: i });
+                  }}>
+                  {hidden ? (
+                    <div className="desc" style={{ color: 'var(--faint)' }}><LockDot /> 잠긴 기록입니다</div>
+                  ) : (
+                    <>
+                      {item.era && <div className="era">{item.era}</div>}
+                      {item.desc && <div className="desc">{item.desc}</div>}
+                      {item.says.map((s, j) => {
+                        const c = charOf(s.charId);
+                        return (
+                          <div key={j} className={`tl-say ${sideOf(s.charId)}`}
+                            style={{ ['--cc' as string]: rgbTriple(c?.color ?? '#5d636d') }}>
+                            <div className="who" style={{ fontFamily: familyOf(c?.fontId) }}>{c?.name}</div>
+                            <div className="bub">{s.text}</div>
+                          </div>
+                        );
+                      })}
+                    </>
+                  )}
+                </div>
+              );
+            })}
               /* 수정·삭제는 우클릭 메뉴로 (v2.0 사용자 요청) — 늘 떠 있는 [삭제] 글자는 없앴다 */
               <div className="tl-item" key={i}
                 onContextMenu={e => {
@@ -1404,6 +1469,18 @@ export default function RelDetailPage() {
               setTSays(l => [...l, { id: newId(), charId: next, text: '' }]);
             }}>＋ ADD LINE</button>
         </div>
+          {/* [잠금 추가] 이 기록 잠금 — 비밀번호는 자관 전체가 공유 */}
+          <LockFields
+            locked={tLocked}
+            password={rel.tlPw ?? ''}
+            onLockedChange={setTLocked}
+            onPasswordChange={v => updateRel({ tlPw: v })}
+          />
+      </Modal>
+
+      {/* [잠금 추가] 타임라인 잠금 해제 */}
+      <Modal open={tlUnlockOpen} onClose={() => setTlUnlockOpen(false)} title="타임라인 잠금 해제">
+        <PasswordGate password={rel.tlPw} onUnlock={() => { unlockTl('tl'); setTlUnlockOpen(false); }} label="비밀번호를 입력하세요" />
       </Modal>
 
       {/* ---------- 질문 추가 모달 ---------- */}
