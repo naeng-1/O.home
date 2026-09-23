@@ -1159,7 +1159,7 @@ export default function RelDetailPage() {
                   </div>
                 );
               }} />
-              { /* [잠금 추가] */ }
+              /* [잠금 추가] */
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center', width: '100%', padding: '8px 6px', border: '1.5px dashed var(--line)', borderRadius: 9, marginBottom: 6, background: '#fff' }}>
                   <span className="drag-h">⠿</span>
                   <div style={{ minWidth: 0 }}>
