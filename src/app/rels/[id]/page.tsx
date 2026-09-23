@@ -1110,7 +1110,7 @@ export default function RelDetailPage() {
                   )}
                   <button className="btn btn-dark" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }} data-tip="기록 추가" onClick={() => { setTlPwDraft(rel.tlPw ?? ''); setTlOpen(true); }}><span className="lb-pc">＋ ADD RECORD</span><span className="lb-m">＋</span></button>
                 </>
-                : <>
+                : tab === 'qa' ? <>
                   {/* [잠금 추가] */}
                   {/* [갤러리 관련 수정] */}
                   <button className="btn btn-ghost" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }} data-tip="질문 리스트 추가" onClick={() => setQsetOpen(true)}><span className="lb-pc">＋ 질문 리스트</span><span className="lb-m">≡</span></button>
