@@ -11,10 +11,14 @@ export const chipBorder = (bd?: string): string =>
 
 export interface CharTab {
   id: string;
-  icon: string;          // 아이콘 문자 (업로드 아이콘은 후속)
+  icon: string;
   title: string;
-  subtitle?: string;     // 제목 아래 작은 글씨 (선택)
-  html: string;          // HTML 에디터 내용 (스크립트 불허 — 렌더 시 sanitize)
+  subtitle?: string;
+  html: string;
+  /** [커스텀] 비밀 탭 잠금 */
+  /* [잠금 추가] */
+  locked?: boolean;
+  password?: string;
 }
 
 export interface Character {
@@ -159,7 +163,12 @@ export interface RelMember {
 }
 
 export interface TlSay { charId: string; text: string }
-export interface TlItem { era?: string; desc?: string; says: TlSay[] }
+export interface TlItem {
+  era?: string; desc?: string; says: TlSay[];
+  /** [커스텀] 잠긴 타임라인 항목 — Relation.tlPw로 푼다 */
+  /* [잠금 추가] */
+  locked?: boolean;
+}
 
 export interface QaAnswer {
   charId: string; text: string;
@@ -400,6 +409,9 @@ export interface Relation {
     *  (참조가 다르므로 섞이지 않는다). 원본은 건드리지 않는다. */
    artCrops?: Record<string, import('@/components/ui/CropEditor').CropValue>;
   timeline: TlItem[];            // base AU의 타임라인
+  /** [커스텀] 타임라인 잠금 비밀번호 — 이 자관(모든 AU 공통)의 잠긴 기록을 푸는 값 */
+  /* [잠금 추가] */
+  tlPw?: string;
   questions: QaEntry[];          // base AU의 문답
   qaPool?: string[];             // base AU의 대기 질문 풀 (v1.9 — 랜덤 출제 대기)
   qaEnabled?: boolean;           // base AU의 QUESTIONS 섹션 사용 여부 (구버전은 questions 존재로 판정)
