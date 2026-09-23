@@ -506,7 +506,7 @@ export default function RelDetailPage() {
   }
 
   const updateRel = (patch: Partial<Relation>) =>
-    setRels(prev => prev.map(r => (r.id === rel.id ? { ...r, ...patch } : r))); // [잠금 추가] [추가수정] 
+    setRels(rels.map(r => (r.id === rel.id ? { ...r, ...patch } : r)));
   // AU별 프로필 데이터 갱신 (v1.9) — base는 최상위 필드, 그 외 AU는 aus 항목에
   const patchAuData = (p: { arts?: string[]; timeline?: TlItem[]; questions?: QaEntry[]; qaEnabled?: boolean; qaPool?: string[] }) => {
     if (isBaseAu) updateRel(p);
@@ -561,13 +561,18 @@ export default function RelDetailPage() {
       locked: tLocked,   // [잠금 추가]
     };
     const editing = tlEditIdx;
-    patchAuData({
-      timeline: editing == null
-        ? [...auTimeline, item]
-        : auTimeline.map((x, i) => (i === editing ? item : x)),
-    });
-    if (tLocked) updateRel({ tlPw: tlPwDraft });   // [잠금 추가] [추가수정] 저장 버튼을 눌렀을 때만 비밀번호 반영
-    closeTl();
+    const nextTimeline = editing == null
+      ? [...auTimeline, item]
+      : auTimeline.map((x, i) => (i === editing ? item : x));
+    if (isBaseAu) {
+      updateRel({ timeline: nextTimeline, ...(tLocked ? { tlPw: tlPwDraft } : {}) });
+    } else {
+      updateRel({
+        aus: rel.aus.map(a => (a.id === au!.id ? { ...a, timeline: nextTimeline } : a)),
+        ...(tLocked ? { tlPw: tlPwDraft } : {}),
+      });
+    }
+    closeTl();   // [잠금 추가] [추가수정] 저장 버튼을 눌렀을 때만 비밀번호 반영
     toast(editing == null ? '타임라인 항목이 추가되었습니다' : '타임라인 항목이 수정되었습니다');
   };
 
