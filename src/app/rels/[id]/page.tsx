@@ -1159,17 +1159,7 @@ export default function RelDetailPage() {
                   </div>
                 );
               }} />
-              /* [잠금 추가] */
-                <div style={{ display: 'flex', gap: 10, alignItems: 'center', width: '100%', padding: '8px 6px', border: '1.5px dashed var(--line)', borderRadius: 9, marginBottom: 6, background: '#fff' }}>
-                  <span className="drag-h">⠿</span>
-                  <div style={{ minWidth: 0 }}>
-                    {item.era && <div className="era">{item.era}</div>}
-                    <div style={{ fontSize: 12.5, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                      {item.desc || item.says.map(s => s.text).join(' / ')}
-                    </div>
-                  </div>
-                </div>
-              )} />
+            { /* [잠금 추가] */ }
           ) : (
           <div>
             { /* [잠금 추가] */ }
