@@ -1193,27 +1193,6 @@ export default function RelDetailPage() {
                 </div>
               );
             })}
-              /* 수정·삭제는 우클릭 메뉴로 (v2.0 사용자 요청) — 늘 떠 있는 [삭제] 글자는 없앴다 */
-              <div className="tl-item" key={i}
-                onContextMenu={e => {
-                  if (!isAdmin) return;
-                  e.preventDefault();
-                  setTlCtx({ x: e.clientX, y: e.clientY, idx: i });
-                }}>
-                {item.era && <div className="era">{item.era}</div>}
-                {item.desc && <div className="desc">{item.desc}</div>}
-                {item.says.map((s, j) => {
-                  const c = charOf(s.charId);
-                  return (
-                    <div key={j} className={`tl-say ${sideOf(s.charId)}`}
-                      style={{ ['--cc' as string]: rgbTriple(c?.color ?? '#5d636d') }}>
-                      <div className="who" style={{ fontFamily: familyOf(c?.fontId) }}>{c?.name}</div>
-                      <div className="bub">{s.text}</div>
-                    </div>
-                  );
-                })}
-              </div>
-              })}
             {auTimeline.length === 0 && <p className="hint">타임라인이 비어 있습니다 — 우상단 [＋ ADD RECORD]로 추가</p>}
           </div>
           )
