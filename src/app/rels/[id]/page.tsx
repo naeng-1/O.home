@@ -1213,7 +1213,7 @@ export default function RelDetailPage() {
                   );
                 })}
               </div>
-            ))}
+              })}
             {auTimeline.length === 0 && <p className="hint">타임라인이 비어 있습니다 — 우상단 [＋ ADD RECORD]로 추가</p>}
           </div>
           )
