@@ -207,7 +207,7 @@ function CharDetailInner() {
                         <button key={t.id} className={tab === t.id ? 'on' : ''} data-tip={t.title} onClick={() => pickTab(t.id)}>
               {t.icon}{t.locked && !unlockedTabs.has(t.id) && <LockDot />}
             </button>
-          { /* [잠금 추가] */ }
+          /* [잠금 추가] */
           ))}
           <button className={tab === '__gallery' ? 'on' : ''} data-tip="갤러리" onClick={() => pickTab('__gallery')}>▦</button>
           { /* [갤러리 관련 수정] */ }
