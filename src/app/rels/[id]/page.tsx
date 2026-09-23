@@ -1131,7 +1131,7 @@ export default function RelDetailPage() {
                     </button>
                   )}
                   <button className="btn btn-dark" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }} data-tip="질문 추가" onClick={() => setQOpen(true)}><span className="lb-pc">＋ ADD QUESTION</span><span className="lb-m">＋</span></button>
-                </>}
+                </>
             </span>
           )}
         </div>
