@@ -328,6 +328,7 @@ export default function RelDetailPage() {
   // 한마디는 핑퐁식으로 여러 개 (사용자 요청)
   const [tSays, setTSays] = useState<{ id: string; charId: string; text: string }[]>([]);
   const [tLocked, setTLocked] = useState(false);   // [잠금 추가]
+  const [tlPwDraft, setTlPwDraft] = useState('');   // [잠금 추가] [추가수정] 타임라인 비밀번호 — 저장을 눌러야 반영
   const [tlSort, setTlSort] = useState(false); // 타임라인 정렬 모드 (드래그앤드롭)
   const [artIdx, setArtIdx] = useState(0);
   /* 중앙 일러 우클릭 → 상세에 보일 위치 조정 (v2.0 사용자 요청).
@@ -505,7 +506,7 @@ export default function RelDetailPage() {
   }
 
   const updateRel = (patch: Partial<Relation>) =>
-    setRels(rels.map(r => (r.id === rel.id ? { ...r, ...patch } : r)));
+    setRels(prev => prev.map(r => (r.id === rel.id ? { ...r, ...patch } : r))); // [잠금 추가] [추가수정] 
   // AU별 프로필 데이터 갱신 (v1.9) — base는 최상위 필드, 그 외 AU는 aus 항목에
   const patchAuData = (p: { arts?: string[]; timeline?: TlItem[]; questions?: QaEntry[]; qaEnabled?: boolean; qaPool?: string[] }) => {
     if (isBaseAu) updateRel(p);
@@ -565,6 +566,13 @@ export default function RelDetailPage() {
         ? [...auTimeline, item]
         : auTimeline.map((x, i) => (i === editing ? item : x)),
     });
+    const editing = tlEditIdx;
+    patchAuData({
+      timeline: editing == null
+        ? [...auTimeline, item]
+        : auTimeline.map((x, i) => (i === editing ? item : x)),
+    });
+    if (tLocked) updateRel({ tlPw: tlPwDraft });   // [잠금 추가] [추가수정] 저장 버튼을 눌렀을 때만 비밀번호 반영
     closeTl();
     toast(editing == null ? '타임라인 항목이 추가되었습니다' : '타임라인 항목이 수정되었습니다');
   };
@@ -1101,7 +1109,7 @@ export default function RelDetailPage() {
                       <span className="lb-pc">🔒 잠금 해제</span><span className="lb-m">🔒</span>
                     </button>
                   )}
-                  <button className="btn btn-dark" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }} data-tip="기록 추가" onClick={() => setTlOpen(true)}><span className="lb-pc">＋ ADD RECORD</span><span className="lb-m">＋</span></button>
+                  <button className="btn btn-dark" style={{ height: 35, padding: '0 14px', fontSize: 11.5 }} data-tip="기록 추가" onClick={() => { setTlPwDraft(rel.tlPw ?? ''); setTlOpen(true); }}><span className="lb-pc">＋ ADD RECORD</span><span className="lb-m">＋</span></button>
                 </>
                 : <>
                   {/* [잠금 추가] */}
@@ -1441,9 +1449,9 @@ export default function RelDetailPage() {
           {/* [잠금 추가] 이 기록 잠금 — 비밀번호는 자관 전체가 공유 */}
           <LockFields
             locked={tLocked}
-            password={rel.tlPw ?? ''}
+            password={tlPwDraft}
             onLockedChange={setTLocked}
-            onPasswordChange={v => updateRel({ tlPw: v })}
+            onPasswordChange={setTlPwDraft}
           />
       </Modal>
 
