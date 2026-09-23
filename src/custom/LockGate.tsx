@@ -66,7 +66,7 @@ export function LockFields({ locked, password, onLockedChange, onPasswordChange 
       {locked && (
         <KInput
           type="text"
-          placeholder="비밀번호"
+          placeholder="비밀번호(영문/숫자/특수문자)"
           value={password}
           onChange={e => onPasswordChange(e.target.value)}
         />
