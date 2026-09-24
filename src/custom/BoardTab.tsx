@@ -6,7 +6,7 @@
 //   1) 비밀글(secret) — 게시판 상세 화면과 같은 규칙: 작성자 본인 또는 관리자만 보임
 //   2) 글이 속한 게시판의 메뉴 공개범위 — 메뉴·메인 위젯이 쓰는 canViewHref와 같은 기준
 // 새 파일이라 원본을 업데이트해도 충돌하지 않는다.
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth';
 import { useLocalList, BOARD_SEED, Post, fmtDate } from '@/lib/postStore';
@@ -32,15 +32,29 @@ function previewOf(body: string): string {
   return text.length > PREVIEW_LEN ? `${text.slice(0, PREVIEW_LEN)}…` : text;
 }
 
-/** 글 한 개 — 제목 + 미리보기, 누르면 원문으로 이동 */
+const FOLD_LABEL: Record<string, string> = { spoiler: '스포일러 주의', adult: '수위 주의' };
+
+/** 글 한 개 — 제목 + 미리보기, 누르면 원문으로 이동. 접힘 글은 눌러야 풀린다 (게시판 상세와 동일 규칙) */
 function BoardItem({ p }: { p: Post }) {
-  const href = `/board/${p.id}`;
+  const [open, setOpen] = useState(false);
+  const folded = !!p.fold && !open;
+  const foldLabel = p.fold ? (p.fold.type === 'custom' ? (p.fold.label || '접힌 글') : FOLD_LABEL[p.fold.type]) : '';
   const preview = previewOf(p.body);
+  const row: React.CSSProperties = { display: 'block', padding: '14px 0', borderBottom: '1px solid var(--line, rgba(128,128,128,.18))' };
+
+  if (folded) {
+    return (
+      <div style={{ ...row, cursor: 'pointer' }} onClick={() => setOpen(true)}>
+        <b style={{ fontSize: 13.5 }}>{foldLabel}</b>
+        <small style={{ marginLeft: 8, color: 'var(--page-desc)' }}>클릭하여 표시</small>
+      </div>
+    );
+  }
   return (
-    <Link href={href} style={{ display: 'block', padding: '14px 0', borderBottom: '1px solid var(--line, rgba(128,128,128,.18))', textDecoration: 'none', color: 'inherit' }}>
+    <Link href={`/board/${p.id}`} style={{ ...row, textDecoration: 'none', color: 'inherit' }}>
       <b style={{ fontSize: 13.5 }}>{p.secret && '🔒 '}{p.title}</b>
       <small style={{ marginLeft: 8, color: 'var(--page-desc)' }}>{p.author} · {fmtDate(p.date)}</small>
-      {preview && <p style={{ margin: '4px 0 0', fontSize: 12.5, color: 'var(--page-desc)', lineHeight: 1.5 }}>{preview}</p>}
+      {preview && <p style={{ margin: '2px 0 0', fontSize: 12.5, color: 'var(--page-desc)', lineHeight: 1.5 }}>{preview}</p>}
     </Link>
   );
 }
@@ -69,7 +83,7 @@ function TaggedBoard({ target }: { target: Named }) {
   if (hits.length === 0) {
     return (
       <p style={{ color: 'var(--page-desc)', fontSize: 13, padding: '24px 0' }}>
-        아직 없습니다 — 게시판 글에 <b>#{target.name}</b> 태그를 붙이면 여기에 나타납니다
+        게시판 글에 <b>#{target.name}</b> 태그를 붙이면 여기에 나타납니다
       </p>
     );
   }
@@ -90,7 +104,7 @@ export function CharBoardTab({ char }: { char: Named }) {
 /** 자관 상세의 「게시글」 탭 내용 */
 export function RelBoardTab({ rel }: { rel: Named }) {
   return (
-    <div style={{ padding: '18px 6px 4px' }}>
+    <div style={{ padding: '8px 6px 4px' }}>
       <TaggedBoard target={rel} />
     </div>
   );
