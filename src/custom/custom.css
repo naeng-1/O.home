@@ -37,3 +37,12 @@
   font-family: var(--custom-rel-card-name-font);
   /* font-weight: 700; */   /* 굵기가 어색하면 주석을 풀어 조절 */
 }
+/* 캐릭터 프로필 — 게시글 탭 위의 빈 sub 칸이 여백만 차지하는 문제 */
+.page-char-detail .panel.profile-info > .sub:empty {
+  margin-bottom: 0 !important;
+}
+
+/* 자관 상세 — 탭 줄과 콘텐츠 사이 간격 좁히기 */
+.panel.timeline .rel-tabs {
+  margin-bottom: 0 !important;
+}
