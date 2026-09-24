@@ -1139,7 +1139,7 @@ export default function RelDetailPage() {
         
         {tab === 'board' ? (
           <RelBoardTab rel={rel} />
-        {tab === 'gal' ? (
+        ) : tab === 'gal' ? (
           <RelGalleryTab rel={rel} />
         ) : tab === 'tl' ? (
       // [갤러리 관련 수정] [게시글 관련 수정]
