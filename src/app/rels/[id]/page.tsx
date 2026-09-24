@@ -1083,7 +1083,7 @@ export default function RelDetailPage() {
           {/* QUESTIONS 섹션은 ＋로 추가해야 생김 (v1.9) — 처음에는 타임라인만 */}
           {qaOn && <button className={tab === 'qa' ? 'on' : ''} onClick={() => setTab('qa')}><span className="lb-pc">QUESTIONS</span><span className="lb-m">Q</span></button>}
           <button className={tab === 'gal' ? 'on' : ''} onClick={() => setTab('gal')}><span className="lb-pc">GALLERY</span><span className="lb-m">G</span></button>
-          <button className={tab === 'board' ? 'on' : ''} onClick={() => setTab('board')}><span className="lb-pc">게시글</span><span className="lb-m">B</span></button>
+          <button className={tab === 'board' ? 'on' : ''} onClick={() => setTab('board')}><span className="lb-pc">POSTS</span><span className="lb-m">B</span></button>
           {/* [갤러리 관련 수정] */}
           {/* [게시글 관련 수정] */}
           {isAdmin && !qaOn && (
