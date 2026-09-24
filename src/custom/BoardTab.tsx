@@ -3,8 +3,7 @@
 // 제목 + 본문 앞부분 미리보기로 보여준다. 갤러리 연동(GalleryTab.tsx)과 같은 태그 매칭 규칙을 쓴다.
 //   태그 비교: 캐릭터/자관의 「이름」 또는 「주소 별명」과 같으면 연결 (앞의 #, 공백, 대소문자 무시)
 // 공개범위:
-//   1) 비밀글(secret)은 항상 제외 — 관리자 본인 글이어도 이 미리보기에는 올리지 않는다
-//      (작성자만 알아볼 수 있는 정보가 프로필 쪽으로 새는 걸 막기 위한 의도적 설계)
+//   1) 비밀글(secret) — 게시판 상세 화면과 같은 규칙: 작성자 본인 또는 관리자만 보임
 //   2) 글이 속한 게시판의 메뉴 공개범위 — 메뉴·메인 위젯이 쓰는 canViewHref와 같은 기준
 // 새 파일이라 원본을 업데이트해도 충돌하지 않는다.
 import React from 'react';
@@ -39,7 +38,7 @@ function BoardItem({ p }: { p: Post }) {
   const preview = previewOf(p.body);
   return (
     <Link href={href} style={{ display: 'block', padding: '14px 0', borderBottom: '1px solid var(--line, rgba(128,128,128,.18))', textDecoration: 'none', color: 'inherit' }}>
-      <b style={{ fontSize: 13.5 }}>{p.title}</b>
+      <b style={{ fontSize: 13.5 }}>{p.secret && '🔒 '}{p.title}</b>
       <small style={{ marginLeft: 8, color: 'var(--page-desc)' }}>{p.author} · {fmtDate(p.date)}</small>
       {preview && <p style={{ margin: '4px 0 0', fontSize: 12.5, color: 'var(--page-desc)', lineHeight: 1.5 }}>{preview}</p>}
     </Link>
@@ -58,7 +57,8 @@ function TaggedBoard({ target }: { target: Named }) {
   const keys = new Set([target.name, target.slug ?? ''].map(norm).filter(Boolean));
   const hits = postsAll
     .filter(p => (p.tags ?? []).some(t => keys.has(norm(t))))
-    .filter(p => !p.secret)   // 비밀글은 항상 제외 (관리자 본인 글이어도)
+    // 비밀글은 원래 게시판 규칙과 동일하게 — 작성자 본인 또는 관리자만
+    .filter(p => !p.secret || isAdmin || (!!p.authorId && p.authorId === user?.id))
     .filter(p => {
       const bid = p.boardId ?? MAIN_BOARD_ID;
       const href = bid === MAIN_BOARD_ID ? '/board' : extraBoardHref(bid);
