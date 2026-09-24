@@ -69,7 +69,7 @@ function TaggedBoard({ target }: { target: Named }) {
   if (hits.length === 0) {
     return (
       <p style={{ color: 'var(--page-desc)', fontSize: 13, padding: '24px 0' }}>
-        게시판 글에 <b>#{target.name}</b> 태그를 붙이면 여기에 나타납니다
+        아직 없습니다 — 게시판 글에 <b>#{target.name}</b> 태그를 붙이면 여기에 나타납니다
       </p>
     );
   }
