@@ -33,6 +33,7 @@ import { useToast } from '@/components/ui/Toast';
 import { PageTitle } from '@/components/ui/PageText';
 import { RelGalleryTab } from '@/custom/GalleryTab'; // [갤러리 관련 수정]
 import { useUnlockedSet, PasswordGate, LockFields, LockDot } from '@/custom/LockGate'; // [잠금 추가]
+import { RelBoardTab } from '@/custom/BoardTab'; // [게시글 관련 수정]
 
 /** 전신 이미지 — 비율 유지, 하단 정렬, 크기 %는 자관 수정 미리보기에서 지정 (v1.9) */
 // 전신 그림자는 「그림자 직접 지정」의 색·강도를 따른다 (v2.0 사용자 요청) — 자관명 그림자와 같은 설정
@@ -247,8 +248,7 @@ export default function RelDetailPage() {
   const [chars, setChars, charsLoaded] = useLocalList<Character>('ohome.chars.v1', CHAR_SEED);
   const [logs] = useLocalList<TrpgLog>('ohome.trpg.v1', TRPG_SEED);
   const [rooms] = useLocalList<RpRoom>('ohome.rp.v1', RP_SEED);
-  const [tab, setTab] = useState<'tl' | 'qa' | 'gal'>('tl');
-  // [갤러리 관련 수정]
+  const [tab, setTab] = useState<'tl' | 'qa' | 'gal' | 'board'>('tl'); // [갤러리 관련 수정] [게시글 관련 수정]
   const [auId, setAuId] = useState('base');
   const [oneMode, setOneMode] = useState<boolean | null>(null);
   const [qaNo, setQaNo] = useState<number | null>(null);
@@ -263,9 +263,8 @@ export default function RelDetailPage() {
   // 타임라인 항목 우클릭 메뉴 (v2.0 사용자 요청) — 수정·삭제. 늘 떠 있는 [삭제] 글자는 없앴다
   const [tlCtx, setTlCtx] = useState<{ x: number; y: number; idx: number } | null>(null);
   const [tlEditIdx, setTlEditIdx] = useState<number | null>(null);   // null이면 새로 추가
-  const [unlockedTl, unlockTl] = useUnlockedSet();   // [커스텀]
-  const [tlUnlockOpen, setTlUnlockOpen] = useState(false);
-  // [잠금 추가]
+  const [unlockedTl, unlockTl] = useUnlockedSet();   // [잠금 추가]
+  const [tlUnlockOpen, setTlUnlockOpen] = useState(false); // [=]
   useEffect(() => {
     if (!tlCtx) return;
     const close = () => setTlCtx(null);
@@ -1084,7 +1083,9 @@ export default function RelDetailPage() {
           {/* QUESTIONS 섹션은 ＋로 추가해야 생김 (v1.9) — 처음에는 타임라인만 */}
           {qaOn && <button className={tab === 'qa' ? 'on' : ''} onClick={() => setTab('qa')}><span className="lb-pc">QUESTIONS</span><span className="lb-m">Q</span></button>}
           <button className={tab === 'gal' ? 'on' : ''} onClick={() => setTab('gal')}><span className="lb-pc">GALLERY</span><span className="lb-m">G</span></button>
+          <button className={tab === 'board' ? 'on' : ''} onClick={() => setTab('board')}><span className="lb-pc">게시글</span><span className="lb-m">B</span></button>
           {/* [갤러리 관련 수정] */}
+          {/* [게시글 관련 수정] */}
           {isAdmin && !qaOn && (
             <button data-tip="QUESTIONS 섹션 추가" style={{ color: 'var(--faint)', fontSize: 14, padding: '0 6px' }}
               onClick={() => setQsetOpen(true)}>＋</button>
@@ -1135,11 +1136,13 @@ export default function RelDetailPage() {
             </span>
           )}
         </div>
-
+        
+        {tab === 'board' ? (
+          <RelBoardTab rel={rel} />
         {tab === 'gal' ? (
           <RelGalleryTab rel={rel} />
         ) : tab === 'tl' ? (
-      // [갤러리 관련 수정]
+      // [갤러리 관련 수정] [게시글 관련 수정]
           tlSort ? (
             /* 정렬 모드 — 드래그앤드롭으로 순서 변경 (4.5) */
             <DragList
