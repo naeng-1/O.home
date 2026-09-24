@@ -18,10 +18,9 @@ import { CroppedBlobImg, CropEditor, type CropValue } from '@/components/ui/Crop
 import { EditableDesc, PageTitle } from '@/components/ui/PageText';
 import { useSectionTitle } from '@/lib/sectionStore';
 import { ConfirmModal } from '@/components/ui/Modal';
-import { CharGalleryTab } from '@/custom/GalleryTab';
-// [갤러리 관련 수정]
-import { useUnlockedSet, PasswordGate, LockDot } from '@/custom/LockGate';
-// [짐금 추가]
+import { CharGalleryTab } from '@/custom/GalleryTab'; // [갤러리 관련 수정]
+import { useUnlockedSet, PasswordGate, LockDot } from '@/custom/LockGate'; // [짐금 추가]
+import { CharBoardTab } from '@/custom/BoardTab'; // [게시글 관련 수정]
 
 function CharDetailInner() {
   const { id } = useParams<{ id: string }>();
@@ -211,6 +210,8 @@ function CharDetailInner() {
           ))}
           <button className={tab === '__gallery' ? 'on' : ''} data-tip="갤러리" onClick={() => pickTab('__gallery')}>▦</button>
           { /* [갤러리 관련 수정] */ }
+              <button className={tab === '__board' ? 'on' : ''} data-tip="게시글" onClick={() => pickTab('__board')}>✎</button>
+          { /* [게시글 관련 수정] */ }
           {isAdmin && (
             <button data-tip="탭 추가 (편집모드)" style={{ borderStyle: 'dashed', fontSize: 13 }}
               onClick={() => router.push(editHref)}>＋</button>
@@ -300,11 +301,14 @@ function CharDetailInner() {
             </>
           ) : tab === '__gallery' ? (
             <CharGalleryTab char={ch} />
+          ) : tab === '__board' ? (
+            <CharBoardTab char={ch} />
           ) : curTab?.locked && !unlockedTabs.has(curTab.id) ? (
             <PasswordGate password={curTab.password} onUnlock={() => unlockTab(curTab!.id)} label={`「${curTab?.title || '이 탭'}」 잠금`} />
           ) : (
             <>
               { /* [갤러리 관련 수정] */ }
+              { /* [게시글 관련 수정] */ }
               <h3 className="tab-tt">{curTab?.title}</h3>
               {curTab?.subtitle && <div className="sub">{curTab.subtitle}</div>}
               <div className="prose" dangerouslySetInnerHTML={{ __html: tabHtml }} />
