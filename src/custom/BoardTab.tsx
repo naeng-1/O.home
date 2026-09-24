@@ -95,7 +95,7 @@ export function CharBoardTab({ char }: { char: Named }) {
   return (
     <>
       <h3 className="tab-tt">게시글</h3>
-      <div className="sub" style={{ marginBottom: 14 }}>#{char.name}</div>
+      <div className="sub" style={{ marginBottom: 6 }}>#{char.name}</div>
       <TaggedBoard target={char} />
     </>
   );
@@ -104,7 +104,7 @@ export function CharBoardTab({ char }: { char: Named }) {
 /** 자관 상세의 「게시글」 탭 내용 */
 export function RelBoardTab({ rel }: { rel: Named }) {
   return (
-    <div style={{ padding: '8px 6px 4px' }}>
+    <div style={{ padding: '0 6px 4px' }}>
       <TaggedBoard target={rel} />
     </div>
   );
